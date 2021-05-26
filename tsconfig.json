@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "ES2015",
+    "target": "es6",
+    "outDir": "./dist/",
+    "moduleResolution": "node",
+    "lib": ["es2015"],
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "downlevelIteration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  }
+}

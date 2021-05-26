@@ -1,0 +1,6 @@
+node_modules/
+docs/
+
+.editorconfig
+config.json
+rollup.config.json

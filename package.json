@@ -1,0 +1,45 @@
+{
+  "name": "jsdoc-to-mdx",
+  "version": "1.0.0",
+  "description": "jsdoc to mdx API document generator",
+  "main": "index.js",
+  "scripts": {
+    "generate": "ts-node -O '{\"module\":\"commonjs\"}' ./src/generate.ts -c config.json",
+    "build": "rollup -c"
+  },
+  "bin": {
+    "jsdoc-to-mdx": "./bin/generate"
+  },
+  "author": {
+    "name": "NAVER Corp."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/naver/jsdoc-to-mdx"
+  },
+  "license": "MIT",
+  "homepage": "https://naver.github.io/jsdoc-to-mdx/",
+  "bugs": {
+    "url": "https://github.com/naver/jsdoc-to-mdx/issues"
+  },
+  "dependencies": {
+    "fs-extra": "^10.0.0",
+    "jsdoc-to-markdown": "^7.0.1"
+  },
+  "peerDependencies": {
+    "@daybrush/jsdoc": "^0.3.10"
+  },
+  "devDependencies": {
+    "@daybrush/jsdoc": "^0.3.10",
+    "@egjs/build-helper": "^0.1.2",
+    "@rollup/plugin-commonjs": "^18.1.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
+    "@types/node": "^15.0.1",
+    "commander": "^7.2.0",
+    "rollup": "^2.47.0",
+    "rollup-plugin-typescript2": "^0.30.0",
+    "ts-node": "^9.1.1",
+    "tslib": "^2.2.0",
+    "typescript": "^4.2.4"
+  }
+}
