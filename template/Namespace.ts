@@ -7,16 +7,20 @@ import Identifier from "../types/Identifier";
 import { inlineLink } from "../src/utils";
 
 import Import from "./partials/Import";
-import Member from "./partials/Member";
+import Entity from "./partials/Entity";
 
-export default (namespaceData: DocumentedNamespace, dataMap: Map<string, Identifier>, locale: string = "en"): string => `---
+export default (data: DocumentedNamespace, dataMap: Map<string, Identifier>, locale: string = "en"): string => `---
 custom_edit_url: null
 ---
 
 ${Import()}
 
-${inlineLink(namespaceData.description)}
+\`\`\`ts
+namespace ${data.name}
+\`\`\`
+
+${inlineLink(data.description)}
 
 ## Members
-${namespaceData.members.map(member => Member(member, dataMap, locale)).join("\n")}
+${data.members.map(member => Entity(member, dataMap, locale)).join("\n")}
 `.replace(/\n{3,}/gm, "\n\n");

@@ -1,6 +1,6 @@
 {
   "name": "jsdoc-to-mdx",
-  "version": "1.0.0",
+  "version": "1.0.4-beta.2",
   "description": "jsdoc to mdx API document generator",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "build": "rollup -c"
   },
   "bin": {
-    "jsdoc-to-mdx": "./bin/generate"
+    "jsdoc-to-mdx": "./bin/generate.js"
   },
   "author": {
     "name": "NAVER Corp."
@@ -37,6 +37,7 @@
     "@types/node": "^15.0.1",
     "commander": "^7.2.0",
     "rollup": "^2.47.0",
+    "rollup-plugin-banner2": "^1.2.2",
     "rollup-plugin-typescript2": "^0.30.0",
     "ts-node": "^9.1.1",
     "tslib": "^2.2.0",
