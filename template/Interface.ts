@@ -4,21 +4,19 @@
  */
 import DocumentedInterface from "../types/DocumentedInterface";
 import Identifier from "../types/Identifier";
-import { getDescription, inlineLink, showProperties } from "../src/utils";
 
 import Import from "./partials/Import";
+import Entity from "./partials/Entity";
 
-export default (interfaceData: DocumentedInterface, dataMap: Map<string, Identifier>, locale: string = "en"): string => `---
+export default (data: DocumentedInterface, dataMap: Map<string, Identifier>, locale: string = "en"): string => `---
 custom_edit_url: null
 ---
 
 ${Import()}
 
 \`\`\`ts
-interface ${interfaceData.name}
+interface ${data.name}
 \`\`\`
 
-${inlineLink(getDescription(interfaceData, locale))}
-
-${showProperties(interfaceData.properties, dataMap, locale)}
+${Entity(data, dataMap, locale)}
 `.replace(/\n{3,}/gm, "\n\n");

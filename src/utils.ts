@@ -26,9 +26,11 @@ export const parseTypescriptName = (name: string) => {
 
   return matched[1] ?? name;
 };
-export const parseType = (type: Required<Identifier>["type"], dataMap: Map<string, Identifier>) => {
+export const parseType = (type: Identifier["type"], dataMap: Map<string, Identifier>) => {
   const genericRegex = /^(?:(\S+)<)([^<>]+)+(?:>)$/;
   const arrayRegex = /^(\S+)\[\]$/;
+
+  if (!type) return "";
 
   return type.names
     .map(name => parseTypescriptName(name))
@@ -195,7 +197,7 @@ export const showEmit = (emits: Identifier["fires"], dataMap: Map<string, Identi
 export const showParameters = (params: Identifier["params"], dataMap: Map<string, Identifier>, locale: string) => params && params.length > 0
   ? `|PARAMETER|TYPE|OPTIONAL|DEFAULT|DESCRIPTION|
 |:---:|:---:|:---:|:---:|:---:|
-${params.map(param => `|${param.name}|${parseType(param.type, dataMap)}|${param.optional ? "yes" : "no"}|${inlineLink(param.defaultvalue)}|${inlineLink(getDescription(param, locale))}|`).join("\n")}`
+${params.map(param => `|${param.name}|${parseType(param.type, dataMap)}|${param.optional ? "✔️" : ""}|${inlineLink(param.defaultvalue?.toString())}|${inlineLink(getDescription(param, locale))}|`).join("\n")}`
   : "";
 
 export const showProperties = (properties: Identifier["properties"], dataMap: Map<string, Identifier>, locale: string) => properties && properties.length > 0
@@ -214,7 +216,7 @@ ${see.map(val => parseType({ names: [getDescription(val, locale)] }, dataMap)).m
   : "";
 
 export const showExample = (data: Identifier, lang = "ts") => data.examples
-  ? data.examples.map(example => example.trim().startsWith("```") ? example : `\`\`\`${lang}\n${example}\n\`\`\``).join("\n\n")
+  ? data.examples.map(example => example.trim()).join("\n\n")
   : "";
 
 export const showInternalWarning = (data: Identifier) => isInternal(data) ? `<div className="notification is-warning my-2">⚠️ This ${data.kind} is for <strong>internal</strong> use only.</div>` : "";

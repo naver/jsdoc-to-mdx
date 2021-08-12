@@ -5,11 +5,11 @@
 import DocumentedClass from "../../types/DocumentedClass";
 import Identifier from "../../types/Identifier";
 
-import Member from "./Member";
+import Entity from "./Entity";
 
 export default (classData: DocumentedClass, dataMap: Map<string, Identifier>, locale: string) => {
   if (classData.events.length <= 0) return "";
 
   return `## Events
-${classData.events.map(evt => Member(evt, dataMap, locale)).join("\n")}`;
+${classData.events.map(evt => Entity(evt, dataMap, locale)).join("\n")}`;
 };

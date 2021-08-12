@@ -1,7 +1,7 @@
 {
   "locales": ["ko"],
   "outDir": "./docs/api",
-  "localesDir": "./docs/i18n",
+  "localesDir": "./docs/i18n/{locale}/",
   "sidebar": "./docs",
   "jsdoc": "./jsdoc.json"
 }

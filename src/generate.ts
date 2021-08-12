@@ -42,7 +42,7 @@ if (!options.config && !options.outDir) {
 const {
   outDir,
   locales = [],
-  localesDir = `${outDir}/i18n`,
+  localesDir = `${outDir}/i18n/{locale}/docusaurus-plugin-content-docs/current/api`,
   sidebar = null,
   jsdoc: jsdocConfig = null
 } = options.config
@@ -79,7 +79,10 @@ jsdoc.on("close", async (code) => {
     const dataMap = new Map<string, Identifier>();
 
     const apiDir = path.resolve(process.cwd(), outDir);
-    const localeAPIDir = (locale: string) => path.resolve(process.cwd(), localesDir, locale);
+    const localeRegex = /{locale}/g;
+    const localeAPIDir = (locale: string) => localeRegex.test(localesDir)
+      ? path.resolve(process.cwd(), localesDir.replace(localeRegex, locale))
+      : path.resolve(process.cwd(), localesDir, locale)
 
     fs.ensureDirSync(path.resolve(process.cwd(), outDir));
     locales.forEach(locale => {
