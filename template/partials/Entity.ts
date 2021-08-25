@@ -26,4 +26,5 @@ ${showThrows(data.exceptions, dataMap, locale)}
 ${showSee(data.see, dataMap, locale)}
 ${showExample(data)}
 
-${showInternalWarning(data)}`;
+${showInternalWarning(data)}
+`;
