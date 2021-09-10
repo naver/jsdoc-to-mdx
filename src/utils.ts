@@ -13,11 +13,15 @@ export const isInternal = (data: Identifier) => data.customTags && data.customTa
 export const isInherited = (data: Identifier) => !!data.inherited && data.inherits;
 export const isAsync = (data: Identifier) => !!data.async;
 
-export const getDescription = (data: { description?: string; [key: string]: any }, locale: string) => data.description
+export const getDescription = (data: { description?: string; [key: string]: any }, locale: string) => {
+  const description = data.description
   ? data[locale]
     ? data[locale] as string
     : data.description
   : "";
+
+  return description.replace(/\n/g, "<br />");
+}
 
 export const parseTypescriptName = (name: string) => {
   const matched = /^\$ts:(.+)(?:<file>(?:.+)<\/file>)$/.exec(name);
