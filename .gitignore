@@ -1,3 +1,4 @@
 node_modules/
 bin/
-docs/
+docs/docs/api/
+docs/i18n/ko/

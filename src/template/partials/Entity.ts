@@ -3,7 +3,7 @@
  * egjs projects are licensed under the MIT license
  */
 import Identifier from "../../types/Identifier";
-import { getDescription, inlineLink, showDefault, showEmit, showExample, showInternalWarning, showParameters, showProperties, showReturn, showSee, showTags, showThrows, showType } from "../../src/utils";
+import { getDescription, inlineLink, showDefault, showEmit, showExample, showInternalWarning, showParameters, showProperties, showReturn, showSee, showTags, showThrows, showType } from "../../utils";
 
 export default (data: Identifier, dataMap: Map<string, Identifier>, locale: string) => `### ${data.name} {#${data.kind === "event" ? `event-${data.name}` : data.name}}
 
