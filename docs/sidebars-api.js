@@ -15,6 +15,27 @@ module.exports = {
         "api/DummyInterface",
         "api/OtherInterface"
       ]
+    },
+    {
+      "type": "category",
+      "label": "Namespace",
+      "items": [
+        "api/DummyNamespace"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Constant",
+      "items": [
+        "api/DIRECTION"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Typedef",
+      "items": [
+        "api/StringOrNumber"
+      ]
     }
   ]
 };

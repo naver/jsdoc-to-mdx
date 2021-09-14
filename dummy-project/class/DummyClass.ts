@@ -1,3 +1,4 @@
+import DummyInterface from "../interface/DummyInterface";
 import ParentClass from "./ParentClass";
 
 /**
@@ -5,18 +6,37 @@ import ParentClass from "./ParentClass";
  * @ko 더미 클래스
  * @extends ParentClass
  */
-class DummyClass extends ParentClass {
+class DummyClass extends ParentClass implements DummyInterface {
   /**
-   * Class Property a
-   * @ko 클래스 프로퍼티 a
+   * Static class property A
+   * @ko 정적 클래스 프로퍼티 A
+   * @type {number}
+   * @readonly
+   * @example
+   * ```ts
+   * DummyClass.staticPropA;
+   * ```
+   */
+  public static staticPropA: number = 1000;
+
+  /**
+   * Class Property A
+   * @ko 클래스 프로퍼티 A
    * @type {string}
    * @readonly
    * @example
    * ```ts
-   * new DummyClass("b").propA === "b"
+   * new DummyClass("b").propA === "b";
    * ```
    */
-  public readonly propA: string
+  public readonly propA: string;
+
+  /**
+   * This will not displayed on the API page, as "@internal" is applied
+   * @ko "@internal"이 적용되어 API 페이지에 표시되지 않을 프로퍼티
+   * @internal
+   */
+  public get propB() { return { prop: { a: 1, b: "b" } } }
 
   /**
    * A constructor of DummyClass

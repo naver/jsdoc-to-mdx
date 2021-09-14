@@ -12,8 +12,9 @@ import ClassConstructor from "./partials/ClassConstructor";
 import ClassProperties from "./partials/ClassProperties";
 import ClassMethods from "./partials/ClassMethods";
 import ClassEvents from "./partials/ClassEvents";
+import DocumentParams from "../types/DocumentParams";
 
-export default (classData: DocumentedClass, dataMap: Map<string, Identifier>, locale: string = "en"): string => `---
+export default (classData: DocumentedClass, params: DocumentParams): string => `---
 custom_edit_url: null
 ---
 
@@ -24,13 +25,13 @@ ${showInternalWarning(classData)}
 \`\`\`ts
 class ${classData.name}${showExtends(classData)}${showImplements(classData)}
 \`\`\`
-${inlineLink(getDescription(classData, locale))}
+${inlineLink(getDescription(classData, params))}
 
-${ClassSummary(classData)}
+${ClassSummary(classData, params)}
 
-${ClassConstructor(classData, dataMap, locale)}
+${ClassConstructor(classData, params)}
 
-${ClassProperties(classData, dataMap, locale)}
-${ClassMethods(classData, dataMap, locale)}
-${ClassEvents(classData, dataMap, locale)}
+${ClassProperties(classData, params)}
+${ClassMethods(classData, params)}
+${ClassEvents(classData, params)}
 `.replace(/\n{3,}/gm, "\n\n");

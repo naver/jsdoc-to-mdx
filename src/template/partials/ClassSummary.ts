@@ -3,23 +3,24 @@
  * egjs projects are licensed under the MIT license
  */
 import DocumentedClass from "../../types/DocumentedClass";
+import DocumentParams from "../../types/DocumentParams";
 import { hashLink } from "../../utils";
 
-export default (classData: DocumentedClass) => {
+export default (classData: DocumentedClass, params: DocumentParams) => {
   const entries: string[] = [];
   const values: string[][] = [];
 
   if (classData.members.length > 0 || classData.static.members.length > 0) {
     entries.push("Properties");
     values.push([
-      ...classData.static.members.map(identifier => `${hashLink(identifier.name, identifier.name)}<span className="bulma-tag is-info ml-2">static</span>`),
+      ...classData.static.members.map(identifier => `${hashLink(identifier.name, identifier.name)}<span className="${params.config.bulma ? "bulma-tag is-info ml-2" : "badge badge--info margin-left--sm"}">static</span>`),
       ...classData.members.map(identifier => `${hashLink(identifier.name, identifier.name)}`)
     ]);
   }
   if (classData.methods.length > 0 || classData.static.methods.length > 0) {
     entries.push("Methods");
     values.push([
-      ...classData.static.methods.map(identifier => `${hashLink(identifier.name, identifier.name)}<span className="bulma-tag is-info ml-2">static</span>`),
+      ...classData.static.methods.map(identifier => `${hashLink(identifier.name, identifier.name)}<span className="${params.config.bulma ? "bulma-tag is-info ml-2" : "badge badge--info margin-left--sm"}">static</span>`),
       ...classData.methods.map(identifier => `${hashLink(identifier.name, identifier.name)}`)
     ]);
   }

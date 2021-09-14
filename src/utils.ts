@@ -5,6 +5,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable arrow-body-style */
 import DocumentedClass from "./types/DocumentedClass";
+import DocumentParams from "./types/DocumentParams";
 import Identifier from "./types/Identifier";
 
 export const isStatic = (data: Identifier) => data.scope && data.scope === "static";
@@ -13,7 +14,7 @@ export const isInternal = (data: Identifier) => data.customTags && data.customTa
 export const isInherited = (data: Identifier) => !!data.inherited && data.inherits;
 export const isAsync = (data: Identifier) => !!data.async;
 
-export const getDescription = (data: { description?: string; [key: string]: any }, locale: string) => {
+export const getDescription = (data: { description?: string; [key: string]: any }, { locale }: DocumentParams) => {
   const description = data.description
   ? data[locale]
     ? data[locale] as string
@@ -30,7 +31,7 @@ export const parseTypescriptName = (name: string) => {
 
   return matched[1] ?? name;
 };
-export const parseType = (type: Identifier["type"], dataMap: Map<string, Identifier>) => {
+export const parseType = (type: Identifier["type"], { dataMap }: DocumentParams) => {
   const genericRegex = /^(?:(\S+)<)([^<>]+)+(?:>)$/;
   const arrayRegex = /^(\S+)\[\]$/;
 
@@ -172,54 +173,54 @@ export const showImplements = (data: Identifier) => data.implements && data.impl
   ? ` implements ${data.implements.map(name => parseTypescriptName(name)).join(", ")}`
   : "";
 
-export const showTags = (data: Identifier) => `<div className="bulma-tags">
+export const showTags = (data: Identifier, docParams: DocumentParams) => `<div${docParams.config.bulma ? ` className="bulma-tags"` : ""}>
 ${[
-  isStatic(data) ? "<span className=\"bulma-tag is-info\">static</span>" : null,
-  isReadonly(data) ? "<span className=\"bulma-tag is-warning\">readonly</span>" : null,
-  isInherited(data) ? "<span className=\"bulma-tag is-danger\">inherited</span>" : null,
-  isAsync(data) ? "<span className=\"bulma-tag is-success\">async</span>" : null
+  isStatic(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-info" : "badge badge--info"}">static</span>` : null,
+  isReadonly(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-warning" : "badge badge--warning"}">readonly</span>` : null,
+  isInherited(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-danger" : "badge badge--danger"}">inherited</span>` : null,
+  isAsync(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-success" : "badge badge--success"}">async</span>` : null
 ].filter(val => !!val).map(val => `  ${val}`).join("\n")}
 </div>`;
 
-export const showType = (type: Identifier["type"], dataMap: Map<string, Identifier>) => type
-  ? `**Type**: ${parseType(type, dataMap)}`
+export const showType = (type: Identifier["type"], docParams: DocumentParams) => type
+  ? `**Type**: ${parseType(type, docParams)}`
   : "";
 
-export const showDefault = (defaultVal: Identifier["defaultvalue"], dataMap: Map<string, Identifier>) => defaultVal
-  ? `**Default**: ${parseType({ names: [defaultVal] }, dataMap)}`
+export const showDefault = (defaultVal: Identifier["defaultvalue"], docParams: DocumentParams) => defaultVal
+  ? `**Default**: ${parseType({ names: [defaultVal] }, docParams)}`
   : "";
 
-export const showReturn = (returns: Identifier["returns"], dataMap: Map<string, Identifier>, locale: string) => returns && returns.length > 0
-  ? `**Returns**: ${returns.filter(val => !!val.type).map(({ type }) => parseType(type!, dataMap))}
-${returns.map(val => val.description ? `- ${inlineLink(getDescription(val, locale))}` : "").join("\n")}`
+export const showReturn = (returns: Identifier["returns"], docParams: DocumentParams) => returns && returns.length > 0
+  ? `**Returns**: ${returns.filter(val => !!val.type).map(({ type }) => parseType(type!, docParams))}
+${returns.map(val => val.description ? `- ${inlineLink(getDescription(val, docParams))}` : "").join("\n")}`
   : "";
 
-export const showEmit = (emits: Identifier["fires"], dataMap: Map<string, Identifier>) => emits && emits.length > 0
-  ? `**Emits**: ${emits.map(emit => parseType({ names: [emit] }, dataMap)).join(", ")}`
+export const showEmit = (emits: Identifier["fires"], docParams: DocumentParams) => emits && emits.length > 0
+  ? `**Emits**: ${emits.map(emit => parseType({ names: [emit] }, docParams)).join(", ")}`
   : "";
 
-export const showParameters = (params: Identifier["params"], dataMap: Map<string, Identifier>, locale: string) => params && params.length > 0
+export const showParameters = (params: Identifier["params"], docParams: DocumentParams) => params && params.length > 0
   ? `|PARAMETER|TYPE|OPTIONAL|DEFAULT|DESCRIPTION|
 |:---:|:---:|:---:|:---:|:---:|
-${params.map(param => `|${param.name}|${parseType(param.type, dataMap)}|${param.optional ? "✔️" : ""}|${inlineLink(param.defaultvalue?.toString())}|${inlineLink(getDescription(param, locale))}|`).join("\n")}`
+${params.map(param => `|${param.name}|${parseType(param.type, docParams)}|${param.optional ? "✔️" : ""}|${inlineLink(param.defaultvalue?.toString())}|${inlineLink(getDescription(param, docParams))}|`).join("\n")}`
   : "";
 
-export const showProperties = (properties: Identifier["properties"], dataMap: Map<string, Identifier>, locale: string) => properties && properties.length > 0
+export const showProperties = (properties: Identifier["properties"], docParams: DocumentParams) => properties && properties.length > 0
   ? `|PROPERTY|TYPE|DESCRIPTION|
 |:---:|:---:|:---:|
-${properties.map(param => `|${param.name}|${parseType(param.type, dataMap)}|${inlineLink(getDescription(param, locale))}|`).join("\n")}`
+${properties.map(param => `|${param.name}|${parseType(param.type, docParams)}|${inlineLink(getDescription(param, docParams))}|`).join("\n")}`
   : "";
 
-export const showThrows = (throws: Identifier["exceptions"], dataMap: Map<string, Identifier>, locale: string) => throws && throws.length > 0
-  ? `${throws.map(exception => `**Throws**: ${parseType(exception.type, dataMap)}\n\n${inlineLink(getDescription(exception, locale))}`).join("\n")}`
+export const showThrows = (throws: Identifier["exceptions"], docParams: DocumentParams) => throws && throws.length > 0
+  ? `${throws.map(exception => `**Throws**: ${parseType(exception.type, docParams)}\n\n${inlineLink(getDescription(exception, docParams))}`).join("\n")}`
   : "";
 
-export const showSee = (see: Identifier["see"], dataMap: Map<string, Identifier>, locale: string) => see
+export const showSee = (see: Identifier["see"], docParams: DocumentParams) => see
   ? `**See**:
-${see.map(val => parseType({ names: [getDescription(val, locale)] }, dataMap)).map(link => `- ${inlineLink(link)}`).join("\n")}`
+${see.map(val => parseType({ names: [getDescription(val, docParams)] }, docParams)).map(link => `- ${inlineLink(link)}`).join("\n")}`
   : "";
 
-export const showExample = (data: Identifier, lang = "ts") => data.examples
+export const showExample = (data: Identifier) => data.examples
   ? data.examples.map(example => example.trim()).join("\n\n")
   : "";
 
