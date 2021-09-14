@@ -6,8 +6,9 @@ import Identifier from "../types/Identifier";
 
 import Import from "./partials/Import";
 import Entity from "./partials/Entity";
+import DocumentParams from "../types/DocumentParams";
 
-export default (data: Identifier, dataMap: Map<string, Identifier>, locale: string = "en"): string => `---
+export default (data: Identifier, params: DocumentParams): string => `---
 custom_edit_url: null
 ---
 
@@ -17,5 +18,5 @@ ${Import()}
 const ${data.name}
 \`\`\`
 
-${Entity(data, dataMap, locale)}
+${Entity(data, params, true)}
 `.replace(/\n{3,}/gm, "\n\n");

@@ -20,6 +20,8 @@ import constantTemplate from "./template/Constant";
 import typedefTemplate from "./template/Typedef";
 import sidebarTemplate from "./template/Sidebar";
 import { parseLocales } from "./utils";
+import Config from "./types/Config";
+import DocumentParams from "./types/DocumentParams";
 
 const program = new Command();
 
@@ -29,28 +31,35 @@ program
   .option("-l, --locales [locales...]", "locales to enable")
   .option("-d, --localesDir <path>", "path to the locales document")
   .option("-s, --sidebar <path>", "path to the sidebar-api.js for Docusaurus v2")
-  .option("-j, --jsdoc", "path to the jsdoc config");
+  .option("-j, --jsdoc <path>", "path to the jsdoc config")
+  .option("-b, --bulma", "use Bulma's classes instead of Infima");
 
 program.parse(process.argv);
 
 const options = program.opts();
 
 if (!options.config && !options.outDir) {
-  throw new Error("error: required option '-o, --outDir <path>' not specified");
+  throw new Error("error: required option '-o, --outDir <path>', or '-c, --config <path>' not specified");
 }
 
-const config = options.config
+const inputConfigs = options.config
   ? require(path.resolve(process.cwd(), options.config))
-  : {
-    outDir: options.outDir
-  };
+  : { ...options };
+
+const config: Config = {
+  locales: [],
+  localesDir: `${inputConfigs.outDir}/i18n/{locale}/docusaurus-plugin-content-docs/current/api`,
+  sidebar: null,
+  jsdoc: null,
+  ...inputConfigs
+};
 
 const {
   outDir,
-  locales = [],
-  localesDir = `${outDir}/i18n/{locale}/docusaurus-plugin-content-docs/current/api`,
-  sidebar = null,
-  jsdoc: jsdocConfig = null
+  locales,
+  localesDir,
+  sidebar,
+  jsdoc: jsdocConfig
 } = config;
 
 const jsdocArgs = ["-X", "-r"];
@@ -180,16 +189,22 @@ jsdoc.on("close", async (code) => {
       }
     });
 
+    const params: DocumentParams = {
+      dataMap,
+      config,
+      locale: "en"
+    }
+
     Object.keys(classes).forEach(async name => {
       await fs.writeFile(
         path.resolve(apiDir, `${name}.mdx`),
-        classTemplate(classes[name], dataMap)
+        classTemplate(classes[name], params)
       );
 
       locales.forEach(async locale => {
         await fs.writeFile(
           path.resolve(localeAPIDir(locale), `${name}.mdx`),
-          classTemplate(classes[name], dataMap, locale)
+          classTemplate(classes[name], { ...params, locale })
         );
       });
     });
@@ -197,13 +212,13 @@ jsdoc.on("close", async (code) => {
     Object.keys(interfaces).forEach(async name => {
       await fs.writeFile(
         path.resolve(apiDir, `${name}.mdx`),
-        interfaceTemplate(interfaces[name], dataMap)
+        interfaceTemplate(interfaces[name], params)
       );
 
       locales.forEach(async locale => {
         await fs.writeFile(
           path.resolve(localeAPIDir(locale), `${name}.mdx`),
-          interfaceTemplate(interfaces[name], dataMap, locale)
+          interfaceTemplate(interfaces[name], { ...params, locale })
         );
       });
     });
@@ -211,13 +226,13 @@ jsdoc.on("close", async (code) => {
     Object.keys(namespaces).forEach(async name => {
       await fs.writeFile(
         path.resolve(apiDir, `${name}.mdx`),
-        namespaceTemplate(namespaces[name], dataMap)
+        namespaceTemplate(namespaces[name], params)
       );
 
       locales.forEach(async locale => {
         await fs.writeFile(
           path.resolve(localeAPIDir(locale), `${name}.mdx`),
-          namespaceTemplate(namespaces[name], dataMap, locale)
+          namespaceTemplate(namespaces[name], { ...params, locale })
         );
       });
     });
@@ -225,13 +240,13 @@ jsdoc.on("close", async (code) => {
     Object.keys(constants).forEach(async name => {
       await fs.writeFile(
         path.resolve(apiDir, `${name}.mdx`),
-        constantTemplate(constants[name], dataMap)
+        constantTemplate(constants[name], params)
       );
 
       locales.forEach(async locale => {
         await fs.writeFile(
           path.resolve(localeAPIDir(locale), `${name}.mdx`),
-          constantTemplate(constants[name], dataMap, locale)
+          constantTemplate(constants[name], { ...params, locale })
         );
       });
     });
@@ -239,13 +254,13 @@ jsdoc.on("close", async (code) => {
     Object.keys(typedefs).forEach(async name => {
       await fs.writeFile(
         path.resolve(apiDir, `${name}.mdx`),
-        typedefTemplate(typedefs[name], dataMap)
+        typedefTemplate(typedefs[name], params)
       );
 
       locales.forEach(async locale => {
         await fs.writeFile(
           path.resolve(localeAPIDir(locale), `${name}.mdx`),
-          typedefTemplate(typedefs[name], dataMap, locale)
+          typedefTemplate(typedefs[name], { ...params, locale })
         );
       });
     });

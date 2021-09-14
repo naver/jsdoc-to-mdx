@@ -3,14 +3,14 @@
  * egjs projects are licensed under the MIT license
  */
 import DocumentedClass from "../../types/DocumentedClass";
-import Identifier from "../../types/Identifier";
+import DocumentParams from "../../types/DocumentParams";
 
 import Entity from "./Entity";
 
-export default (classData: DocumentedClass, dataMap: Map<string, Identifier>, locale: string) => {
+export default (classData: DocumentedClass, params: DocumentParams) => {
   if (classData.members.length <= 0 && classData.static.members.length <= 0) return "";
 
   return `## Properties
-${classData.static.members.map(member => Entity(member, dataMap, locale)).join("\n")}
-${classData.members.map(member => Entity(member, dataMap, locale)).join("\n")}`;
+${classData.static.members.map(member => Entity(member, params)).join("\n")}
+${classData.members.map(member => Entity(member, params)).join("\n")}`;
 };

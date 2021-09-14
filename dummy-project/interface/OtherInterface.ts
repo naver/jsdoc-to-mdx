@@ -4,11 +4,12 @@ import DummyClass from "../class/DummyClass";
  * Description of OtherInterface
  * @ko OtherInterface의 설명
  * @interface
- * @property {Array<DummyClass>} propA Desc of propA<ko>propA의 설명</ko>
+ * @property {object} prop A property<ko>프로퍼티</ko>
+ * @property {number} [prop.a] foo<ko>foo</ko>
+ * @property {string} [prop.b] bar<ko>bar</ko>
  */
 interface OtherInterface {
-  propA: DummyClass[];
-  propB: { a: number; b: string };
+  prop: { a: number; b: string };
 }
 
 export default OtherInterface;

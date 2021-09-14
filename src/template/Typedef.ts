@@ -3,15 +3,16 @@
  * egjs projects are licensed under the MIT license
  */
 import Identifier from "../types/Identifier";
+import DocumentParams from "../types/DocumentParams";
 
 import Import from "./partials/Import";
 import Entity from "./partials/Entity";
 
-export default (data: Identifier, dataMap: Map<string, Identifier>, locale: string = "en"): string => `---
+export default (data: Identifier, params: DocumentParams): string => `---
 custom_edit_url: null
 ---
 
 ${Import()}
 
-${Entity(data, dataMap, locale)}
+${Entity(data, params, true)}
 `.replace(/\n{3,}/gm, "\n\n");
