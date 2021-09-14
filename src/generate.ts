@@ -9,16 +9,16 @@ import { Command } from "commander";
 import * as fs from "fs-extra";
 import jsdocParse from "jsdoc-parse";
 
-import Identifier from "../types/Identifier";
-import DocumentedClass from "../types/DocumentedClass";
-import DocumentedInterface from "../types/DocumentedInterface";
-import DocumentedNamespace from "../types/DocumentedNamespace";
-import classTemplate from "../template/Class";
-import interfaceTemplate from "../template/Interface";
-import namespaceTemplate from "../template/Namespace";
-import constantTemplate from "../template/Constant";
-import typedefTemplate from "../template/Typedef";
-import sidebarTemplate from "../template/Sidebar";
+import Identifier from "./types/Identifier";
+import DocumentedClass from "./types/DocumentedClass";
+import DocumentedInterface from "./types/DocumentedInterface";
+import DocumentedNamespace from "./types/DocumentedNamespace";
+import classTemplate from "./template/Class";
+import interfaceTemplate from "./template/Interface";
+import namespaceTemplate from "./template/Namespace";
+import constantTemplate from "./template/Constant";
+import typedefTemplate from "./template/Typedef";
+import sidebarTemplate from "./template/Sidebar";
 import { parseLocales } from "./utils";
 
 const program = new Command();
@@ -39,19 +39,21 @@ if (!options.config && !options.outDir) {
   throw new Error("error: required option '-o, --outDir <path>' not specified");
 }
 
+const config = options.config
+  ? require(path.resolve(process.cwd(), options.config))
+  : {
+    outDir: options.outDir
+  };
+
 const {
   outDir,
   locales = [],
   localesDir = `${outDir}/i18n/{locale}/docusaurus-plugin-content-docs/current/api`,
   sidebar = null,
   jsdoc: jsdocConfig = null
-} = options.config
-  ? require(path.resolve(process.cwd(), options.config))
-  : {
-    outDir: options.outDir
-  };
+} = config;
 
-const jsdocArgs = ["-X"];
+const jsdocArgs = ["-X", "-r"];
 
 if (jsdocConfig) {
   jsdocArgs.push("-c", jsdocConfig);

@@ -4,7 +4,7 @@
  */
 import DocumentedClass from "../types/DocumentedClass";
 import Identifier from "../types/Identifier";
-import { getDescription, inlineLink, showExtends, showImplements, showInternalWarning } from "../src/utils";
+import { getDescription, inlineLink, showExtends, showImplements, showInternalWarning } from "../utils";
 
 import Import from "./partials/Import";
 import ClassSummary from "./partials/ClassSummary";

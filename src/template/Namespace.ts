@@ -4,7 +4,7 @@
  */
 import DocumentedNamespace from "../types/DocumentedNamespace";
 import Identifier from "../types/Identifier";
-import { inlineLink } from "../src/utils";
+import { inlineLink } from "../utils";
 
 import Import from "./partials/Import";
 import Entity from "./partials/Entity";

@@ -4,7 +4,7 @@
  */
 import DocumentedClass from "../../types/DocumentedClass";
 import Identifier from "../../types/Identifier";
-import { showParameters } from "../../src/utils";
+import { showParameters } from "../../utils";
 
 export default (classData: DocumentedClass, dataMap: Map<string, Identifier>, locale: string) => {
   if (!classData.constructorData) return "";

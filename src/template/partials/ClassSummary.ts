@@ -3,7 +3,7 @@
  * egjs projects are licensed under the MIT license
  */
 import DocumentedClass from "../../types/DocumentedClass";
-import { hashLink } from "../../src/utils";
+import { hashLink } from "../../utils";
 
 export default (classData: DocumentedClass) => {
   const entries: string[] = [];

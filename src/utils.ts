@@ -4,8 +4,8 @@
  */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable arrow-body-style */
-import DocumentedClass from "../types/DocumentedClass";
-import Identifier from "../types/Identifier";
+import DocumentedClass from "./types/DocumentedClass";
+import Identifier from "./types/Identifier";
 
 export const isStatic = (data: Identifier) => data.scope && data.scope === "static";
 export const isReadonly = (data: Identifier) => !!data.readonly;
