@@ -225,3 +225,12 @@ export const showExample = (data: Identifier) => data.examples
   : "";
 
 export const showInternalWarning = (data: Identifier) => isInternal(data) ? `<div className="notification is-warning my-2">⚠️ This ${data.kind} is for <strong>internal</strong> use only.</div>` : "";
+
+export const showFunctionParams = (data: Identifier, docParams: DocumentParams) => {
+  if (data.kind !== "function") return "";
+
+  // Remove props inside objects
+  const params = (data.params ?? []).filter(param => !param.name.includes("."))
+
+  return `(${params.map(param => `${param.name}: ${parseType(param.type, docParams)}${param.defaultvalue ? ` = ${param.defaultvalue}` : "" }`).join(", ")})`
+}

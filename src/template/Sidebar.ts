@@ -9,13 +9,15 @@ export default ({
   interfaces,
   namespaces,
   constants,
-  typedefs
+  typedefs,
+  globals
 }: {
   classes: Identifier[];
   interfaces: Identifier[];
   namespaces: Identifier[];
   constants: Identifier[];
   typedefs: Identifier[];
+  globals: Identifier[];
 }) => {
   const sidebar: {[key: string]: any} = {};
 
@@ -59,6 +61,14 @@ export default ({
       type: "category",
       label: "Typedef",
       items: typedefs.map(item => `api/${item.name}`)
+    });
+  }
+
+  if (globals.length > 0) {
+    categories.push({
+      type: "category",
+      label: "Global",
+      items: globals.map(item => `api/${item.name}`)
     });
   }
 

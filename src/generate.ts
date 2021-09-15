@@ -18,6 +18,7 @@ import interfaceTemplate from "./template/Interface";
 import namespaceTemplate from "./template/Namespace";
 import constantTemplate from "./template/Constant";
 import typedefTemplate from "./template/Typedef";
+import globalTemplate from "./template/Global";
 import sidebarTemplate from "./template/Sidebar";
 import { parseLocales } from "./utils";
 import Config from "./types/Config";
@@ -86,6 +87,7 @@ jsdoc.on("close", async (code) => {
     const namespaces: {[key: string]: DocumentedNamespace} = {};
     const constants: {[key: string]: Identifier} = {};
     const typedefs: {[key: string]: Identifier} = {};
+    const globals: {[key: string]: Identifier} = {};
 
     const dataMap = new Map<string, Identifier>();
 
@@ -152,6 +154,8 @@ jsdoc.on("close", async (code) => {
           constants[identifier.name] = identifier;
         } else if (identifier.kind === "typedef") {
           typedefs[identifier.name] = identifier;
+        } else if (identifier.scope === "global") {
+          globals[identifier.name] = identifier;
         }
 
         templateData.splice(templateData.findIndex(val => val === identifier), 1);
@@ -263,6 +267,20 @@ jsdoc.on("close", async (code) => {
           typedefTemplate(typedefs[name], { ...params, locale })
         );
       });
+
+      Object.keys(globals).forEach(async name => {
+        await fs.writeFile(
+          path.resolve(apiDir, `${name}.mdx`),
+          globalTemplate(globals[name], params)
+        );
+
+        locales.forEach(async locale => {
+          await fs.writeFile(
+            path.resolve(localeAPIDir(locale), `${name}.mdx`),
+            globalTemplate(globals[name], { ...params, locale })
+          );
+        });
+      });
     });
 
     if (sidebar) {
@@ -273,7 +291,8 @@ jsdoc.on("close", async (code) => {
           interfaces: Object.values(interfaces),
           namespaces: Object.values(namespaces),
           constants: Object.values(constants),
-          typedefs: Object.values(typedefs)
+          typedefs: Object.values(typedefs),
+          globals: Object.values(globals)
         })
       );
     }
