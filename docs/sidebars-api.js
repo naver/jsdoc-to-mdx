@@ -13,7 +13,8 @@ module.exports = {
       "label": "Interface",
       "items": [
         "api/DummyInterface",
-        "api/OtherInterface"
+        "api/OtherInterface",
+        "api/ParentInterface"
       ]
     },
     {
@@ -35,6 +36,13 @@ module.exports = {
       "label": "Typedef",
       "items": [
         "api/StringOrNumber"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Global",
+      "items": [
+        "api/SomeGlobalFunction"
       ]
     }
   ]
