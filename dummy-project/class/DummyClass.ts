@@ -60,3 +60,11 @@ class DummyClass extends ParentClass implements DummyInterface {
 }
 
 export default DummyClass;
+
+/**
+ * Event that fires when DummyClass is ready
+ * @ko DummyClass가 준비되었을때 발생하는 이벤트
+ * @event DummyClass#ready
+ * @type {object}
+ * @property {string} eventName Event name<ko>이벤트명</ko>
+ */

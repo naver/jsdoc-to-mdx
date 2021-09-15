@@ -8,7 +8,7 @@ const isDev = process.env.NODE_ENV === 'development';
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 (module.exports = {
   title: 'jsdoc-to-mdx',
-  tagline: 'jsdoc to mdx API document generator, powered with Docusaurus',
+  tagline: 'jsdoc to mdx API document generator, powered with Docusaurus and jsdoc-to-markdown',
   url: 'https://naver.github.io',
   baseUrl: isDev ? '/' : '/jsdoc-to-mdx/',
   onBrokenLinks: 'throw',
@@ -25,14 +25,14 @@ const isDev = process.env.NODE_ENV === 'development';
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
-          editUrl: 'https://github.com/facebook/docusaurus/edit/main/website/',
+          editUrl: 'https://github.com/naver/jsdoc-to-mdx/edit/main/docs/docs/',
           remarkPlugins: [remarkBreak],
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           editUrl:
-            'https://github.com/facebook/docusaurus/edit/main/website/blog/',
+            'https://github.com/naver/jsdoc-to-mdx/edit/main/docs/blog/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -45,11 +45,14 @@ const isDev = process.env.NODE_ENV === 'development';
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: 'jsdoc-to-mdx',
+        logo: {
+          alt: 'logo',
+          src: 'img/jsdoc2mdx.svg'
+        },
         items: [
           {
             type: "doc",
-            docId: "intro",
+            docId: "installation",
             label: "Tutorial",
             position: "left"
           },
@@ -91,6 +94,11 @@ const isDev = process.env.NODE_ENV === 'development';
             ],
           },
         ],
+        logo: {
+          alt: 'jsdoc2mdx',
+          src: 'img/jsdoc2mdx_white.svg',
+          href: 'https://github.com/naver/jsdoc-to-mdx'
+        },
         copyright: `Copyright © ${new Date().getFullYear()} NAVER, Inc. Built with Docusaurus.`,
       },
       prism: {

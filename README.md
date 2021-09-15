@@ -10,15 +10,17 @@ This module is designed for use with [docusaurus v2](https://docusaurus.io/)
 - "-l, --locales [locales...]", "locales to enable"
 - "-d, --localesDir <path>", "path to the locales document"
 - "-s, --sidebar <path>", "path to the generate sidebar-api.js for Docusaurus v2"
-- "-j, --jsdoc", "path to the jsdoc config"
+- "-j, --jsdoc <path>", "path to the jsdoc config"
+- "-b, --bulma", "use Bulma's classes instead of Infima"
 
 ## Config example
 ```json
 {
   "locales": ["ko"],
-  "outDir": "docs/api",
-  "localesDir": "docs/i18n",
-  "sidebar": "docs",
-  "jsdoc": "jsdoc.json"
+  "outDir": "./docs/docs/api",
+  "localesDir": "./docs/i18n/{locale}/docusaurus-plugin-content-docs/current/api",
+  "sidebar": "./docs",
+  "jsdoc": "./jsdoc.json",
+  "bulma": false
 }
 ```

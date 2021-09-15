@@ -1,0 +1,60 @@
+---
+title: Setting up Docusaurus
+id: setting-up-docusaurus
+slug: /setting-up-docusaurus
+custom_edit_url: null
+---
+
+## Sidebars
+jsdoc-to-mdx will generate `sidebars-api.js` if the path to it is given.
+You can import that file in the `sidebars.js` file that Docusaurus generates.
+
+```js title=sidebars.js
+module.exports = {
+  docs: [
+    // Other docs
+    "installation",
+    "setting-up-docusaurus"
+  ],
+  // Import generated sidebars-api.js
+  ...require("./sidebars-api.js")
+};
+```
+By this, the sidebar of generated mdx files will be available with the id "api"
+
+## docusaurus.config.js
+### Navbar settings
+You can add a navigation bar item to the generated api document.
+
+```js title=docusaurus.config.js
+navbar: {
+  items: [
+    {
+      type: "doc",
+      docId: "api/FirstItemToShow",
+      label: "API",
+      position: "left"
+    }
+  ]
+}
+```
+
+### Markdown plugins
+Using the [remark-breaks](https://github.com/remarkjs/remark-breaks) plugin is highly recommended.
+
+```js title=docusaurus.config.js
+presets: [
+  [
+    '@docusaurus/preset-classic',
+    /** @type {import('@docusaurus/preset-classic').Options} */
+    ({
+      docs: {
+        sidebarPath: require.resolve('./sidebars.js'),
+        // Please change this to your repo.
+        editUrl: 'https://github.com/naver/jsdoc-to-mdx/edit/main/docs/docs/',
+        remarkPlugins: [require("remark-breaks")],
+      }
+    })
+  ]
+]
+```
