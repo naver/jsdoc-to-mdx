@@ -11,8 +11,9 @@
 
 module.exports = {
   docs: [
-    "intro",
-    "setting-up-docusaurus"
+    "installation",
+    "setting-up-docusaurus",
+    "config"
   ],
   ...require("./sidebars-api.js")
 };

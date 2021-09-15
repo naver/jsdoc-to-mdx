@@ -16,8 +16,9 @@
   }
 }
 
-.buttons {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.featureImage {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  padding-bottom: 1.25rem;
 }

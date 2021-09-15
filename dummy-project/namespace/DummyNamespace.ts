@@ -18,6 +18,6 @@ function FunctionInsideNamespace() {
  * A constant in DummyNamespace
  * @ko DummyNamespace 내부의 함수
  * @memberof DummyNamespace
- * @type {string}
+ * @type {StringOrNumber}
  */
 const constantInsideNamespace = "I'm constant";
