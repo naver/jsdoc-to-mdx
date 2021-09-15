@@ -32,6 +32,7 @@ program
   .option("-l, --locales [locales...]", "locales to enable")
   .option("-d, --localesDir <path>", "path to the locales document")
   .option("-s, --sidebar <path>", "path to the sidebar-api.js for Docusaurus v2")
+  .option("-p, --prefix <prefix>", "path prefix of the sidebar items. Should end with '/', default is \"api/\"")
   .option("-j, --jsdoc <path>", "path to the jsdoc config")
   .option("-b, --bulma", "use Bulma's classes instead of Infima");
 
@@ -51,6 +52,7 @@ const config: Config = {
   locales: [],
   localesDir: `${inputConfigs.outDir}/i18n/{locale}/docusaurus-plugin-content-docs/current/api`,
   sidebar: null,
+  prefix: "api/",
   jsdoc: null,
   ...inputConfigs
 };
@@ -293,7 +295,7 @@ jsdoc.on("close", async (code) => {
           constants: Object.values(constants),
           typedefs: Object.values(typedefs),
           globals: Object.values(globals)
-        })
+        }, config.prefix)
       );
     }
   }

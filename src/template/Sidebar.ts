@@ -18,7 +18,7 @@ export default ({
   constants: Identifier[];
   typedefs: Identifier[];
   globals: Identifier[];
-}) => {
+}, prefix: string) => {
   const sidebar: {[key: string]: any} = {};
 
   const categories: any[] = [];
@@ -28,7 +28,7 @@ export default ({
     categories.push({
       type: "category",
       label: "Class",
-      items: classes.map(item => `api/${item.name}`)
+      items: classes.map(item => `${prefix}${item.name}`)
     });
   }
 
@@ -36,7 +36,7 @@ export default ({
     categories.push({
       type: "category",
       label: "Interface",
-      items: interfaces.map(item => `api/${item.name}`)
+      items: interfaces.map(item => `${prefix}${item.name}`)
     });
   }
 
@@ -44,7 +44,7 @@ export default ({
     categories.push({
       type: "category",
       label: "Namespace",
-      items: namespaces.map(item => `api/${item.name}`)
+      items: namespaces.map(item => `${prefix}${item.name}`)
     });
   }
 
@@ -52,7 +52,7 @@ export default ({
     categories.push({
       type: "category",
       label: "Constant",
-      items: constants.map(item => `api/${item.name}`)
+      items: constants.map(item => `${prefix}${item.name}`)
     });
   }
 
@@ -60,7 +60,7 @@ export default ({
     categories.push({
       type: "category",
       label: "Typedef",
-      items: typedefs.map(item => `api/${item.name}`)
+      items: typedefs.map(item => `${prefix}${item.name}`)
     });
   }
 
@@ -68,7 +68,7 @@ export default ({
     categories.push({
       type: "category",
       label: "Global",
-      items: globals.map(item => `api/${item.name}`)
+      items: globals.map(item => `${prefix}${item.name}`)
     });
   }
 

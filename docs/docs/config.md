@@ -73,6 +73,13 @@ If the locale name should be applied to the path name, you can include the speci
 
 Path to generate `sidebar-api.js` that can be used to show the sidebar of the generated API documents.
 
+## prefix
+- type: string
+- `-p, --prefix`
+
+Path prefix of the generated sidebar items.
+Should end with `/`, and default is `api/`.
+
 ## jsdoc
 - type: string
 - `-j, --jsdoc`
