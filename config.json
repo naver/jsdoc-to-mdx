@@ -3,5 +3,6 @@
   "outDir": "./docs/docs/api",
   "localesDir": "./docs/i18n/{locale}/docusaurus-plugin-content-docs/current/api",
   "sidebar": "./docs",
+  "prefix": "api/",
   "jsdoc": "./jsdoc.json"
 }
