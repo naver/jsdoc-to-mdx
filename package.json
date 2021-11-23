@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "generate": "ts-node -O '{\"module\":\"commonjs\"}' ./src/generate.ts -c config.json",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "publish:demo": "npm run build --prefix docs && gh-pages -d docs/build/ --add --remote upstream"
   },
   "bin": {
     "jsdoc-to-mdx": "./bin/generate.js"
@@ -36,6 +37,7 @@
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@types/node": "^15.0.1",
     "commander": "^7.2.0",
+    "gh-pages": "^3.2.3",
     "rollup": "^2.47.0",
     "rollup-plugin-banner2": "^1.2.2",
     "rollup-plugin-typescript2": "^0.30.0",
