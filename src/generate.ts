@@ -269,19 +269,19 @@ jsdoc.on("close", async (code) => {
           typedefTemplate(typedefs[name], { ...params, locale })
         );
       });
+    });
 
-      Object.keys(globals).forEach(async name => {
+    Object.keys(globals).forEach(async name => {
+      await fs.writeFile(
+        path.resolve(apiDir, `${name}.mdx`),
+        globalTemplate(globals[name], params)
+      );
+
+      locales.forEach(async locale => {
         await fs.writeFile(
-          path.resolve(apiDir, `${name}.mdx`),
-          globalTemplate(globals[name], params)
+          path.resolve(localeAPIDir(locale), `${name}.mdx`),
+          globalTemplate(globals[name], { ...params, locale })
         );
-
-        locales.forEach(async locale => {
-          await fs.writeFile(
-            path.resolve(localeAPIDir(locale), `${name}.mdx`),
-            globalTemplate(globals[name], { ...params, locale })
-          );
-        });
       });
     });
 
