@@ -5,6 +5,16 @@ import ParentClass from "./ParentClass";
  * Description of DummyClass
  * @ko 더미 클래스
  * @extends ParentClass
+ * @see ParentClass
+ * @example
+ * Dummy Class Example (markdown supported)
+ * ```js
+ * const some_meaningless_code = true;
+ * ```
+ *
+ * |table1|table2|
+ * |---|---|
+ * |{@link ParentClass}|B|
  */
 class DummyClass extends ParentClass implements DummyInterface {
   /**
@@ -37,6 +47,13 @@ class DummyClass extends ParentClass implements DummyInterface {
    * @internal
    */
   public get propB() { return { prop: { a: 1, b: "b" } } }
+
+  /**
+   * Absoulte URL {@link http://naver.com NAVER}
+   * @ko 절대 URL 참조 {@link http://naver.com NAVER}
+   * @type {DummyInterface[]}
+   */
+  public propC: DummyInterface[];
 
   /**
    * A constructor of DummyClass

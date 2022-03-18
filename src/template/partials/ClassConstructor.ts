@@ -4,7 +4,7 @@
  */
 import DocumentedClass from "../../types/DocumentedClass";
 import DocumentParams from "../../types/DocumentParams";
-import { showParameters } from "../../utils";
+import Entity from "./Entity";
 
 export default (classData: DocumentedClass, params: DocumentParams) => {
   if (!classData.constructorData) return "";
@@ -12,10 +12,10 @@ export default (classData: DocumentedClass, params: DocumentParams) => {
   const constructorData = classData.constructorData;
   const constructorParams = constructorData.params || [];
 
-  return `## Constructor
+  return `## constructor
 \`\`\`ts
 new ${classData.name}(${constructorParams.map(param => param.name).join(", ")})
 \`\`\`
-${showParameters(constructorParams, params)}
+${Entity(classData.constructorData, params, true)}
 `;
 };

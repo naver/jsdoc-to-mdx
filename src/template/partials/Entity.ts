@@ -26,6 +26,4 @@ ${showProperties(data.properties, params)}
 ${showThrows(data.exceptions, params)}
 ${showSee(data.see, params)}
 ${showExample(data)}
-
-${showInternalWarning(data)}
 `;

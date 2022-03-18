@@ -3,8 +3,7 @@
  * egjs projects are licensed under the MIT license
  */
 import DocumentedClass from "../types/DocumentedClass";
-import Identifier from "../types/Identifier";
-import { getDescription, inlineLink, showExtends, showImplements, showInternalWarning } from "../utils";
+import { showExtends, showImplements, showInternalWarning } from "../utils";
 
 import Import from "./partials/Import";
 import ClassSummary from "./partials/ClassSummary";
@@ -13,6 +12,7 @@ import ClassProperties from "./partials/ClassProperties";
 import ClassMethods from "./partials/ClassMethods";
 import ClassEvents from "./partials/ClassEvents";
 import DocumentParams from "../types/DocumentParams";
+import Entity from "./partials/Entity";
 
 export default (classData: DocumentedClass, params: DocumentParams): string => `---
 custom_edit_url: null
@@ -25,7 +25,7 @@ ${showInternalWarning(classData)}
 \`\`\`ts
 class ${classData.name}${showExtends(classData)}${showImplements(classData)}
 \`\`\`
-${inlineLink(getDescription(classData, params))}
+${Entity(classData, params, true)}
 
 ${ClassSummary(classData, params)}
 

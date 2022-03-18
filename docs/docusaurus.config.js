@@ -2,15 +2,13 @@ const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const remarkBreak = require("remark-breaks");
 
-const isDev = process.env.NODE_ENV === 'development';
-
 // With JSDoc @type annotations, IDEs can provide config autocompletion
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 (module.exports = {
   title: 'jsdoc-to-mdx',
   tagline: 'jsdoc to mdx API document generator, powered with Docusaurus and jsdoc-to-markdown',
   url: 'https://naver.github.io',
-  baseUrl: isDev ? '/' : '/jsdoc-to-mdx/',
+  baseUrl: '/jsdoc-to-mdx/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
