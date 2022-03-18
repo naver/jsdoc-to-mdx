@@ -2,10 +2,10 @@
  * Copyright (c) 2021 NAVER Corp.
  * egjs projects are licensed under the MIT license
  */
-import { spawn } from "child_process";
 import path from "path";
 import { Command } from "commander";
-
+import { spawn } from "child-process-promise";
+import tmp from "tmp-promise";
 import * as fs from "fs-extra";
 import jsdocParse from "jsdoc-parse";
 
@@ -65,238 +65,240 @@ const {
   jsdoc: jsdocConfig
 } = config;
 
-const jsdocArgs = ["-X", "-r"];
+const jsdocArgs = ["@daybrush/jsdoc", "-X", "-r"];
 
 if (jsdocConfig) {
   jsdocArgs.push("-c", jsdocConfig);
 }
 
-const jsdoc = spawn("jsdoc", jsdocArgs);
-const tmp = fs.createWriteStream("/tmp/jsdoc-to-mdx-ast.json");
+tmp.withDir(async tempDir => {
+  const tempFile = path.resolve(tempDir.path, "jsdoc-to-mdx-ast.json");
+  jsdocArgs.push("-d", tempDir.path);
 
-jsdoc.stdout.pipe(tmp);
-jsdoc.stderr.pipe(process.stdout);
+  const jsdocPromise = spawn(`npx`, jsdocArgs, {
+    env: {
+      PATH: process.env.PATH
+    }
+  });
+  jsdocPromise.childProcess.stdout.pipe(fs.createWriteStream(tempFile));
+  jsdocPromise.childProcess.stderr.pipe(process.stdout);
 
-jsdoc.on("close", async (code) => {
-  if (code !== 0) {
-    console.error(`ps process exited with code ${code}`);
-  } else {
-    const ast = JSON.parse(fs.readFileSync("/tmp/jsdoc-to-mdx-ast.json").toString());
-    const templateData = jsdocParse(ast) as Identifier[];
+  await jsdocPromise;
+  const ast = JSON.parse(fs.readFileSync(tempFile).toString());
+  const templateData = jsdocParse(ast) as Identifier[];
 
-    const classes: {[key: string]: DocumentedClass} = {};
-    const interfaces: {[key: string]: DocumentedInterface} = {};
-    const namespaces: {[key: string]: DocumentedNamespace} = {};
-    const constants: {[key: string]: Identifier} = {};
-    const typedefs: {[key: string]: Identifier} = {};
-    const globals: {[key: string]: Identifier} = {};
+  const classes: {[key: string]: DocumentedClass} = {};
+  const interfaces: {[key: string]: DocumentedInterface} = {};
+  const namespaces: {[key: string]: DocumentedNamespace} = {};
+  const constants: {[key: string]: Identifier} = {};
+  const typedefs: {[key: string]: Identifier} = {};
+  const globals: {[key: string]: Identifier} = {};
 
-    const dataMap = new Map<string, Identifier>();
+  const dataMap = new Map<string, Identifier>();
 
-    const apiDir = path.resolve(process.cwd(), outDir);
-    const localeRegex = /{locale}/g;
-    const localeAPIDir = (locale: string) => localeRegex.test(localesDir)
-      ? path.resolve(process.cwd(), localesDir.replace(localeRegex, locale))
-      : path.resolve(process.cwd(), localesDir, locale)
+  const apiDir = path.resolve(process.cwd(), outDir);
+  const localeRegex = /{locale}/g;
+  const localeAPIDir = (locale: string) => localeRegex.test(localesDir)
+    ? path.resolve(process.cwd(), localesDir.replace(localeRegex, locale))
+    : path.resolve(process.cwd(), localesDir, locale)
 
-    fs.ensureDirSync(path.resolve(process.cwd(), outDir));
-    locales.forEach(locale => {
-      fs.ensureDirSync(localeAPIDir(locale));
+  fs.ensureDirSync(path.resolve(process.cwd(), outDir));
+  locales.forEach(locale => {
+    fs.ensureDirSync(localeAPIDir(locale));
+  });
+
+  templateData.forEach(identifier => {
+    dataMap.set(identifier.longname, identifier);
+
+    if (identifier.see) {
+      identifier.see = (identifier.see as unknown as string[]).map(val => ({ description: val }));
+    }
+
+    Object.keys(identifier).forEach(key => {
+      if (typeof identifier[key] === "object" && "description" in identifier[key]) {
+        locales.forEach(locale => parseLocales(identifier[key], locale));
+      } else if (Array.isArray(identifier[key])) {
+        identifier[key].forEach(val => {
+          if (typeof val === "object" && "description" in val) {
+            locales.forEach(locale => parseLocales(val, locale));
+          }
+        });
+      }
     });
+  });
 
-    templateData.forEach(identifier => {
-      dataMap.set(identifier.longname, identifier);
+  templateData
+    .filter(identifier => !identifier.memberof)
+    .forEach(identifier => {
+      if (identifier.kind === "class") {
+        const classData = identifier as DocumentedClass;
+        classData.static = {
+          members: [],
+          methods: []
+        };
+        classData.members = [];
+        classData.methods = [];
+        classData.events = [];
 
-      if (identifier.see) {
-        identifier.see = (identifier.see as unknown as string[]).map(val => ({ description: val }));
+        classes[classData.name] = classData;
+      } else if (identifier.kind === "interface") {
+        const interfaceData = identifier as DocumentedInterface;
+
+        if (!interfaceData.properties) {
+          interfaceData.properties = [];
+        }
+
+        interfaces[interfaceData.name] = interfaceData;
+      } else if (identifier.kind === "namespace") {
+        const namespaceData = identifier as DocumentedNamespace;
+
+        namespaceData.members = [];
+
+        namespaces[identifier.name] = namespaceData;
+      } else if (identifier.kind === "constant") {
+        constants[identifier.name] = identifier;
+      } else if (identifier.kind === "typedef") {
+        typedefs[identifier.name] = identifier;
+      } else if (identifier.scope === "global") {
+        globals[identifier.name] = identifier;
       }
 
-      Object.keys(identifier).forEach(key => {
-        if (typeof identifier[key] === "object" && "description" in identifier[key]) {
-          locales.forEach(locale => parseLocales(identifier[key], locale));
-        } else if (Array.isArray(identifier[key])) {
-          identifier[key].forEach(val => {
-            if (typeof val === "object" && "description" in val) {
-              locales.forEach(locale => parseLocales(val, locale));
-            }
-          });
-        }
-      });
+      templateData.splice(templateData.findIndex(val => val === identifier), 1);
     });
 
-    templateData
-      .filter(identifier => !identifier.memberof)
-      .forEach(identifier => {
-        if (identifier.kind === "class") {
-          const classData = identifier as DocumentedClass;
-          classData.static = {
-            members: [],
-            methods: []
-          };
-          classData.members = [];
-          classData.methods = [];
-          classData.events = [];
+  templateData.forEach(identifier => {
+    if (!identifier.memberof) return;
 
-          classes[classData.name] = classData;
-        } else if (identifier.kind === "interface") {
-          const interfaceData = identifier as DocumentedInterface;
+    if (classes[identifier.memberof]) {
+      const classData = classes[identifier.memberof];
 
-          if (!interfaceData.properties) {
-            interfaceData.properties = [];
-          }
-
-          interfaces[interfaceData.name] = interfaceData;
-        } else if (identifier.kind === "namespace") {
-          const namespaceData = identifier as DocumentedNamespace;
-
-          namespaceData.members = [];
-
-          namespaces[identifier.name] = namespaceData;
-        } else if (identifier.kind === "constant") {
-          constants[identifier.name] = identifier;
-        } else if (identifier.kind === "typedef") {
-          typedefs[identifier.name] = identifier;
-        } else if (identifier.scope === "global") {
-          globals[identifier.name] = identifier;
-        }
-
-        templateData.splice(templateData.findIndex(val => val === identifier), 1);
-      });
-
-    templateData.forEach(identifier => {
-      if (!identifier.memberof) return;
-
-      if (classes[identifier.memberof]) {
-        const classData = classes[identifier.memberof];
-
-        if (identifier.kind === "constructor") {
-          classData.constructorData = identifier;
-        } else if (identifier.kind === "event") {
-          classData.events.push(identifier);
-        } else if (identifier.kind === "member") {
-          if (identifier.scope === "static") {
-            classData.static.members.push(identifier);
-          } else {
-            classData.members.push(identifier);
-          }
-        } else if (identifier.kind === "function") {
-          if (identifier.scope === "static") {
-            classData.static.methods.push(identifier);
-          } else {
-            classData.methods.push(identifier);
-          }
+      if (identifier.kind === "constructor") {
+        classData.constructorData = identifier;
+      } else if (identifier.kind === "event") {
+        classData.events.push(identifier);
+      } else if (identifier.kind === "member") {
+        if (identifier.scope === "static") {
+          classData.static.members.push(identifier);
         } else {
-          console.error(identifier.kind, identifier.name, "is not included");
+          classData.members.push(identifier);
         }
-      } else if (namespaces[identifier.memberof]) {
-        const namespaceData = namespaces[identifier.memberof];
-
-        namespaceData.members.push(identifier);
+      } else if (identifier.kind === "function") {
+        if (identifier.scope === "static") {
+          classData.static.methods.push(identifier);
+        } else {
+          classData.methods.push(identifier);
+        }
+      } else {
+        console.error(identifier.kind, identifier.name, "is not included");
       }
-    });
+    } else if (namespaces[identifier.memberof]) {
+      const namespaceData = namespaces[identifier.memberof];
 
-    const params: DocumentParams = {
-      dataMap,
-      config,
-      locale: "en"
+      namespaceData.members.push(identifier);
     }
+  });
 
-    Object.keys(classes).forEach(async name => {
-      await fs.writeFile(
-        path.resolve(apiDir, `${name}.mdx`),
-        classTemplate(classes[name], params)
-      );
-
-      locales.forEach(async locale => {
-        await fs.writeFile(
-          path.resolve(localeAPIDir(locale), `${name}.mdx`),
-          classTemplate(classes[name], { ...params, locale })
-        );
-      });
-    });
-
-    Object.keys(interfaces).forEach(async name => {
-      await fs.writeFile(
-        path.resolve(apiDir, `${name}.mdx`),
-        interfaceTemplate(interfaces[name], params)
-      );
-
-      locales.forEach(async locale => {
-        await fs.writeFile(
-          path.resolve(localeAPIDir(locale), `${name}.mdx`),
-          interfaceTemplate(interfaces[name], { ...params, locale })
-        );
-      });
-    });
-
-    Object.keys(namespaces).forEach(async name => {
-      await fs.writeFile(
-        path.resolve(apiDir, `${name}.mdx`),
-        namespaceTemplate(namespaces[name], params)
-      );
-
-      locales.forEach(async locale => {
-        await fs.writeFile(
-          path.resolve(localeAPIDir(locale), `${name}.mdx`),
-          namespaceTemplate(namespaces[name], { ...params, locale })
-        );
-      });
-    });
-
-    Object.keys(constants).forEach(async name => {
-      await fs.writeFile(
-        path.resolve(apiDir, `${name}.mdx`),
-        constantTemplate(constants[name], params)
-      );
-
-      locales.forEach(async locale => {
-        await fs.writeFile(
-          path.resolve(localeAPIDir(locale), `${name}.mdx`),
-          constantTemplate(constants[name], { ...params, locale })
-        );
-      });
-    });
-
-    Object.keys(typedefs).forEach(async name => {
-      await fs.writeFile(
-        path.resolve(apiDir, `${name}.mdx`),
-        typedefTemplate(typedefs[name], params)
-      );
-
-      locales.forEach(async locale => {
-        await fs.writeFile(
-          path.resolve(localeAPIDir(locale), `${name}.mdx`),
-          typedefTemplate(typedefs[name], { ...params, locale })
-        );
-      });
-    });
-
-    Object.keys(globals).forEach(async name => {
-      await fs.writeFile(
-        path.resolve(apiDir, `${name}.mdx`),
-        globalTemplate(globals[name], params)
-      );
-
-      locales.forEach(async locale => {
-        await fs.writeFile(
-          path.resolve(localeAPIDir(locale), `${name}.mdx`),
-          globalTemplate(globals[name], { ...params, locale })
-        );
-      });
-    });
-
-    if (sidebar) {
-      await fs.writeFile(
-        path.resolve(process.cwd(), sidebar, "sidebars-api.js"),
-        sidebarTemplate({
-          classes: Object.values(classes),
-          interfaces: Object.values(interfaces),
-          namespaces: Object.values(namespaces),
-          constants: Object.values(constants),
-          typedefs: Object.values(typedefs),
-          globals: Object.values(globals)
-        }, config.prefix)
-      );
-    }
+  const params: DocumentParams = {
+    dataMap,
+    config,
+    locale: "en"
   }
-});
+
+  Object.keys(classes).forEach(async name => {
+    await fs.writeFile(
+      path.resolve(apiDir, `${name}.mdx`),
+      classTemplate(classes[name], params)
+    );
+
+    locales.forEach(async locale => {
+      await fs.writeFile(
+        path.resolve(localeAPIDir(locale), `${name}.mdx`),
+        classTemplate(classes[name], { ...params, locale })
+      );
+    });
+  });
+
+  Object.keys(interfaces).forEach(async name => {
+    await fs.writeFile(
+      path.resolve(apiDir, `${name}.mdx`),
+      interfaceTemplate(interfaces[name], params)
+    );
+
+    locales.forEach(async locale => {
+      await fs.writeFile(
+        path.resolve(localeAPIDir(locale), `${name}.mdx`),
+        interfaceTemplate(interfaces[name], { ...params, locale })
+      );
+    });
+  });
+
+  Object.keys(namespaces).forEach(async name => {
+    await fs.writeFile(
+      path.resolve(apiDir, `${name}.mdx`),
+      namespaceTemplate(namespaces[name], params)
+    );
+
+    locales.forEach(async locale => {
+      await fs.writeFile(
+        path.resolve(localeAPIDir(locale), `${name}.mdx`),
+        namespaceTemplate(namespaces[name], { ...params, locale })
+      );
+    });
+  });
+
+  Object.keys(constants).forEach(async name => {
+    await fs.writeFile(
+      path.resolve(apiDir, `${name}.mdx`),
+      constantTemplate(constants[name], params)
+    );
+
+    locales.forEach(async locale => {
+      await fs.writeFile(
+        path.resolve(localeAPIDir(locale), `${name}.mdx`),
+        constantTemplate(constants[name], { ...params, locale })
+      );
+    });
+  });
+
+  Object.keys(typedefs).forEach(async name => {
+    await fs.writeFile(
+      path.resolve(apiDir, `${name}.mdx`),
+      typedefTemplate(typedefs[name], params)
+    );
+
+    locales.forEach(async locale => {
+      await fs.writeFile(
+        path.resolve(localeAPIDir(locale), `${name}.mdx`),
+        typedefTemplate(typedefs[name], { ...params, locale })
+      );
+    });
+  });
+
+  Object.keys(globals).forEach(async name => {
+    await fs.writeFile(
+      path.resolve(apiDir, `${name}.mdx`),
+      globalTemplate(globals[name], params)
+    );
+
+    locales.forEach(async locale => {
+      await fs.writeFile(
+        path.resolve(localeAPIDir(locale), `${name}.mdx`),
+        globalTemplate(globals[name], { ...params, locale })
+      );
+    });
+  });
+
+  if (sidebar) {
+    await fs.writeFile(
+      path.resolve(process.cwd(), sidebar, "sidebars-api.js"),
+      sidebarTemplate({
+        classes: Object.values(classes),
+        interfaces: Object.values(interfaces),
+        namespaces: Object.values(namespaces),
+        constants: Object.values(constants),
+        typedefs: Object.values(typedefs),
+        globals: Object.values(globals)
+      }, config.prefix)
+    );
+  }
+}, { unsafeCleanup: true });
