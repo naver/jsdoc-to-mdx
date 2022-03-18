@@ -135,7 +135,9 @@ export const parseLink = (text?: string) => {
   }
 
   results.map(result => {
-    result.url = result.url.replace(/event:/g, "event-").replace(/\./g, "#");
+    if (!result.url.startsWith("http")) {
+      result.url = result.url.replace(/event:/g, "event-").replace(/\./g, "#");
+    }
     return result;
   });
 
@@ -221,7 +223,7 @@ ${see.map(val => parseType({ names: [getDescription(val, docParams)] }, docParam
   : "";
 
 export const showExample = (data: Identifier) => data.examples
-  ? data.examples.map(example => example.trim()).join("\n\n")
+  ? data.examples.map(example => example.trim()).map(example => inlineLink(example)).join("\n\n")
   : "";
 
 export const showInternalWarning = (data: Identifier) => isInternal(data) ? `<div className="notification is-warning my-2">⚠️ This ${data.kind} is for <strong>internal</strong> use only.</div>` : "";
