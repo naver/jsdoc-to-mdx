@@ -4,7 +4,7 @@
  */
 import path from "path";
 import { Command } from "commander";
-import { spawn } from "child-process-promise";
+import child_process from "child_process";
 import tmp from "tmp-promise";
 import * as fs from "fs-extra";
 import jsdocParse from "jsdoc-parse";
@@ -75,15 +75,24 @@ tmp.withDir(async tempDir => {
   const tempFile = path.resolve(tempDir.path, "jsdoc-to-mdx-ast.json");
   jsdocArgs.push("-d", tempDir.path);
 
-  const jsdocPromise = spawn(`npx`, jsdocArgs, {
-    env: {
-      PATH: process.env.PATH
-    }
+  const jsdocProcess = child_process.fork(require.resolve("@daybrush/jsdoc/jsdoc.js"), jsdocArgs, {
+    stdio: "pipe"
   });
-  jsdocPromise.childProcess.stdout.pipe(fs.createWriteStream(tempFile));
-  jsdocPromise.childProcess.stderr.pipe(process.stdout);
 
-  await jsdocPromise;
+  jsdocProcess.stdout!.pipe(fs.createWriteStream(tempFile));
+
+  const donePromise = new Promise<void>((resolve, reject) => {
+    jsdocProcess.on("close", () => {
+      resolve();
+    });
+
+    jsdocProcess.on("error", err => {
+      reject(err);
+    });
+  });
+
+  await donePromise;
+
   const ast = JSON.parse(fs.readFileSync(tempFile).toString());
   const templateData = jsdocParse(ast) as Identifier[];
 
