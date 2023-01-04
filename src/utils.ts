@@ -14,12 +14,12 @@ export const isInternal = (data: Identifier) => data.customTags && data.customTa
 export const isInherited = (data: Identifier) => !!data.inherited && data.inherits;
 export const isAsync = (data: Identifier) => !!data.async;
 
-export const getDescription = (data: { description?: string; [key: string]: any }, { locale }: DocumentParams) => {
+export const getDescription = (data: { description?: string;[key: string]: any }, { locale }: DocumentParams) => {
   const description = data.description
-  ? data[locale]
-    ? data[locale] as string
-    : data.description
-  : "";
+    ? data[locale]
+      ? data[locale] as string
+      : data.description
+    : "";
 
   return description.replace(/\n/g, "<br />");
 }
@@ -53,7 +53,7 @@ export const parseType = (type: Identifier["type"], { dataMap }: DocumentParams)
         arrayMatches[1] && checkingValues.push(arrayMatches[1]);
       }
 
-      const checked: {[key: string]: boolean} = {};
+      const checked: { [key: string]: boolean } = {};
 
       checkingValues.forEach(typeName => {
         typeName.split("|")
@@ -177,11 +177,11 @@ export const showImplements = (data: Identifier) => data.implements && data.impl
 
 export const showTags = (data: Identifier, docParams: DocumentParams) => `<div${docParams.config.bulma ? ` className="bulma-tags"` : ""}>
 ${[
-  isStatic(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-info" : "badge badge--info"}">static</span>` : null,
-  isReadonly(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-warning" : "badge badge--warning"}">readonly</span>` : null,
-  isInherited(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-danger" : "badge badge--danger"}">inherited</span>` : null,
-  isAsync(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-success" : "badge badge--success"}">async</span>` : null
-].filter(val => !!val).map(val => `  ${val}`).join("\n")}
+    isStatic(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-info" : "badge badge--info"}">static</span>` : null,
+    isReadonly(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-warning" : "badge badge--warning"}">readonly</span>` : null,
+    isInherited(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-danger" : "badge badge--danger"}">inherited</span>` : null,
+    isAsync(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-success" : "badge badge--success"}">async</span>` : null
+  ].filter(val => !!val).map(val => `  ${val}`).join("\n")}
 </div>`;
 
 export const showType = (type: Identifier["type"], docParams: DocumentParams) => type
@@ -207,11 +207,22 @@ export const showParameters = (params: Identifier["params"], docParams: Document
 ${params.map(param => `|${param.name}|${parseType(param.type, docParams)}|${param.optional ? "✔️" : ""}|${inlineLink(param.defaultvalue?.toString())}|${inlineLink(getDescription(param, docParams))}|`).join("\n")}`
   : "";
 
-export const showProperties = (properties: Identifier["properties"], docParams: DocumentParams) => properties && properties.length > 0
-  ? `|PROPERTY|TYPE|DESCRIPTION|
-|:---:|:---:|:---:|
-${properties.map(param => `|${param.name}|${parseType(param.type, docParams)}|${inlineLink(getDescription(param, docParams))}|`).join("\n")}`
-  : "";
+export const showProperties = (properties: Identifier["properties"], docParams: DocumentParams) => {
+  if (!properties || properties.length === 0) {
+    return;
+  }
+  const hasDefault = properties.some(property => "defaultvalue" in property);
+  const defaultTitle = hasDefault ? "DEFAULT|" : "";
+  const defaultLine = hasDefault ? ":---:|" : "";
+
+  return `|PROPERTY|TYPE|${defaultTitle}DESCRIPTION|
+|:---:|:---:|${defaultLine}:---:|
+${properties.map(param => {
+  const defaultValue = hasDefault ? `${`${param.defaultvalue ?? ""}`.trim()}|` : "";
+
+  return `|${param.name}|${parseType(param.type, docParams)}|${defaultValue}${inlineLink(getDescription(param, docParams))}|`;
+}).join("\n")}`;
+}
 
 export const showThrows = (throws: Identifier["exceptions"], docParams: DocumentParams) => throws && throws.length > 0
   ? `${throws.map(exception => `**Throws**: ${parseType(exception.type, docParams)}\n\n${inlineLink(getDescription(exception, docParams))}`).join("\n")}`
@@ -234,5 +245,5 @@ export const showFunctionParams = (data: Identifier, docParams: DocumentParams) 
   // Remove props inside objects
   const params = (data.params ?? []).filter(param => !param.name.includes("."))
 
-  return `(${params.map(param => `${param.name}: ${parseType(param.type, docParams)}${param.defaultvalue ? ` = ${param.defaultvalue}` : "" }`).join(", ")})`
+  return `(${params.map(param => `${param.name}: ${parseType(param.type, docParams)}${param.defaultvalue ? ` = ${param.defaultvalue}` : ""}`).join(", ")})`
 }

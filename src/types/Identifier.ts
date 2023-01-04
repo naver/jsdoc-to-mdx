@@ -45,6 +45,7 @@ interface Identifier {
   properties?: Array<{
     type: Type;
     description: string;
+    defaultvalue?: string;
     name: string;
   }>;
   inherits?: string;
