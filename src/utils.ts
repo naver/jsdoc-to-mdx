@@ -177,11 +177,11 @@ export const showImplements = (data: Identifier) => data.implements && data.impl
 
 export const showTags = (data: Identifier, docParams: DocumentParams) => `<div${docParams.config.bulma ? ` className="bulma-tags"` : ""}>
 ${[
-    isStatic(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-info" : "badge badge--info"}">static</span>` : null,
-    isReadonly(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-warning" : "badge badge--warning"}">readonly</span>` : null,
-    isInherited(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-danger" : "badge badge--danger"}">inherited</span>` : null,
-    isAsync(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-success" : "badge badge--success"}">async</span>` : null
-  ].filter(val => !!val).map(val => `  ${val}`).join("\n")}
+  isStatic(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-info" : "badge badge--info"}">static</span>` : null,
+  isReadonly(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-warning" : "badge badge--warning"}">readonly</span>` : null,
+  isInherited(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-danger" : "badge badge--danger"}">inherited</span>` : null,
+  isAsync(data) ? `<span className="${docParams.config.bulma ? "bulma-tag is-success" : "badge badge--success"}">async</span>` : null
+].filter(val => !!val).map(val => `  ${val}`).join("\n")}
 </div>`;
 
 export const showType = (type: Identifier["type"], docParams: DocumentParams) => type
