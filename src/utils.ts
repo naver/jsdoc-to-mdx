@@ -209,7 +209,7 @@ ${params.map(param => `|${param.name}|${parseType(param.type, docParams)}|${para
 
 export const showProperties = (properties: Identifier["properties"], docParams: DocumentParams) => {
   if (!properties || properties.length === 0) {
-    return;
+    return "";
   }
   const hasDefault = properties.some(property => "defaultvalue" in property);
   const defaultTitle = hasDefault ? "DEFAULT|" : "";
