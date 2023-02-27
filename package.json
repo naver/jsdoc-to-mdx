@@ -24,6 +24,7 @@
     "url": "https://github.com/naver/jsdoc-to-mdx/issues"
   },
   "dependencies": {
+    "@daybrush/jsdoc": "^0.4.5",
     "commander": "^9.4.1",
     "fs-extra": "^10.0.0",
     "jsdoc-parse": "^6.2.0",
@@ -31,7 +32,6 @@
     "tmp-promise": "^3.0.3"
   },
   "devDependencies": {
-    "@daybrush/jsdoc": "^0.4.5",
     "@egjs/build-helper": "^0.1.2",
     "@rollup/plugin-commonjs": "^18.1.0",
     "@types/node": "^15.0.1",
