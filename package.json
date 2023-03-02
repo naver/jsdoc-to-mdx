@@ -1,6 +1,6 @@
 {
   "name": "jsdoc-to-mdx",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "jsdoc to mdx API document generator",
   "main": "index.js",
   "scripts": {
