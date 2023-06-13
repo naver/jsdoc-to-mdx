@@ -1,0 +1,72 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/Config",
+    "definitions": {
+        "Config": {
+            "type": "object",
+            "properties": {
+                "outDir": {
+                    "type": "string"
+                },
+                "locales": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "localesDir": {
+                    "type": "string"
+                },
+                "prefix": {
+                    "type": "string"
+                },
+                "jsdoc": {
+                    "type": "string"
+                },
+                "bulma": {
+                    "type": "boolean"
+                },
+                "subDirs": {
+                    "type": "object",
+                    "properties": {
+                        "class": {
+                            "type": "string"
+                        },
+                        "interface": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        },
+                        "constant": {
+                            "type": "string"
+                        },
+                        "typedef": {
+                            "type": "string"
+                        },
+                        "global": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "class",
+                        "interface",
+                        "namespace",
+                        "constant",
+                        "typedef",
+                        "global"
+                    ],
+                    "additionalProperties": false
+                }
+            },
+            "required": [
+                "outDir",
+                "locales",
+                "localesDir",
+                "prefix",
+                "bulma"
+            ],
+            "additionalProperties": false
+        }
+    }
+}

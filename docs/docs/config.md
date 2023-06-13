@@ -12,9 +12,16 @@ Configs can be provided either by command line parameters or config file with JS
   "locales": ["ko"],
   "outDir": "./docs/docs/api",
   "localesDir": "./docs/i18n/{locale}/docusaurus-plugin-content-docs/current/api",
-  "sidebar": "./docs",
   "jsdoc": "./jsdoc.json",
-  "bulma": false
+  "bulma": false,
+  "subDirs": {
+    "class": "Class",
+    "interface": "Interface",
+    "namespace": "Namespace",
+    "constant": "Constant",
+    "typedef": "Typedef",
+    "global": "Global"
+  }
 }
 ```
 
@@ -67,12 +74,6 @@ Path to generate mdx files.
 Path to generate mdx files with locales applied.
 If the locale name should be applied to the path name, you can include the special string `{locale}` then it will automatically transform into the target locale name.
 
-## sidebar
-- type: string
-- `-s, --sidebar`
-
-Path to generate `sidebar-api.js` that can be used to show the sidebar of the generated API documents.
-
 ## prefix
 - type: string
 - `-p, --prefix`
@@ -93,3 +94,23 @@ Path to the jsdoc config file.
 If enabled, generated documents will have [Bulma](https://bulma.io/)'s classes instead of [Infima](https://infima.dev/)'s.
 Additional SCSS file to load Bulma's CSS is required.
 - See: https://github.com/naver/egjs-flicking/blob/master/docs/src/css/bulma-override.sass
+
+## subDirs
+- type: object
+- `shell script arguments not supported`
+
+If provided, defined documentation types will be placed in respective subdirectories of `outDir` and `localesDir`.
+Example:
+```json title=config.json
+{
+  "outDir": "./docs/docs/api",
+  "subDirs": {
+    "class": "Class", // classes will be written to `./docs/docs/api/Class`
+    "interface": "Interface", // interfaces will be written to `./docs/docs/api/Interface`
+    "namespace": "Namespace", // namespaces will be written to `./docs/docs/api/Namespace`
+    "constant": "Constant", // constants will be written to `./docs/docs/api/Constant`
+    "typedef": "Typedef", // typedefs will be written to `./docs/docs/api/Typedef`
+    "global": "Global" // globals will be written to `./docs/docs/api/Global`
+  }
+}
+```

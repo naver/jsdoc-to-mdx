@@ -56,7 +56,7 @@ const remarkBreak = require("remark-breaks");
           },
           {
             type: "doc",
-            docId: "api/DummyClass",
+            docId: "api/Class/DummyClass",
             label: "Demo",
             position: "left"
           },

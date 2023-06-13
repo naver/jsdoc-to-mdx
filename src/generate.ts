@@ -19,10 +19,10 @@ import namespaceTemplate from "./template/Namespace";
 import constantTemplate from "./template/Constant";
 import typedefTemplate from "./template/Typedef";
 import globalTemplate from "./template/Global";
-import sidebarTemplate from "./template/Sidebar";
 import { parseLocales } from "./utils";
 import Config from "./types/Config";
 import DocumentParams from "./types/DocumentParams";
+import {DocumentCollection, Documented} from './types/DocumentCollection';
 
 const program = new Command();
 
@@ -31,7 +31,6 @@ program
   .option("-o, --outDir <path>", "path to the generated mdx files")
   .option("-l, --locales [locales...]", "locales to enable")
   .option("-d, --localesDir <path>", "path to the locales document")
-  .option("-s, --sidebar <path>", "path to the sidebar-api.js for Docusaurus v2")
   .option("-p, --prefix <prefix>", "path prefix of the sidebar items. Should end with '/', default is \"api/\"")
   .option("-j, --jsdoc <path>", "path to the jsdoc config")
   .option("-b, --bulma", "use Bulma's classes instead of Infima");
@@ -61,7 +60,6 @@ const {
   outDir,
   locales,
   localesDir,
-  sidebar,
   jsdoc: jsdocConfig
 } = config;
 
@@ -96,12 +94,12 @@ tmp.withDir(async tempDir => {
   const ast = JSON.parse(fs.readFileSync(tempFile).toString());
   const templateData = jsdocParse(ast) as Identifier[];
 
-  const classes: {[key: string]: DocumentedClass} = {};
-  const interfaces: {[key: string]: DocumentedInterface} = {};
-  const namespaces: {[key: string]: DocumentedNamespace} = {};
-  const constants: {[key: string]: Identifier} = {};
-  const typedefs: {[key: string]: Identifier} = {};
-  const globals: {[key: string]: Identifier} = {};
+  const classes: DocumentCollection<DocumentedClass> = {};
+  const interfaces: DocumentCollection<DocumentedInterface> = {};
+  const namespaces: DocumentCollection<DocumentedNamespace> = {};
+  const constants: DocumentCollection<Identifier> = {};
+  const typedefs: DocumentCollection<Identifier> = {};
+  const globals: DocumentCollection<Identifier> = {};
 
   const dataMap = new Map<string, Identifier>();
 
@@ -111,7 +109,7 @@ tmp.withDir(async tempDir => {
     ? path.resolve(process.cwd(), localesDir.replace(localeRegex, locale))
     : path.resolve(process.cwd(), localesDir, locale)
 
-  fs.ensureDirSync(path.resolve(process.cwd(), outDir));
+  fs.ensureDirSync(apiDir);
   locales.forEach(locale => {
     fs.ensureDirSync(localeAPIDir(locale));
   });
@@ -214,100 +212,110 @@ tmp.withDir(async tempDir => {
   }
 
   Object.keys(classes).forEach(async name => {
+    const pathToDir = config.subDirs?.class ? path.resolve(apiDir, config.subDirs.class) : path.resolve(apiDir)
+    fs.ensureDirSync(pathToDir)
     await fs.writeFile(
-      path.resolve(apiDir, `${name}.mdx`),
+      path.resolve(pathToDir, `${name}.mdx`),
       classTemplate(classes[name], params)
     );
 
     locales.forEach(async locale => {
+      const localeDir = config.subDirs?.class ? path.resolve(localeAPIDir(locale), config.subDirs.class) : path.resolve(localeAPIDir(locale))
+      fs.ensureDirSync(localeDir)
       await fs.writeFile(
-        path.resolve(localeAPIDir(locale), `${name}.mdx`),
+        path.resolve(localeDir, `${name}.mdx`),
         classTemplate(classes[name], { ...params, locale })
       );
     });
   });
 
   Object.keys(interfaces).forEach(async name => {
+    const pathToDir = config.subDirs?.interface ? path.resolve(apiDir, config.subDirs.interface) : path.resolve(apiDir)
+    fs.ensureDirSync(pathToDir)
     await fs.writeFile(
-      path.resolve(apiDir, `${name}.mdx`),
+      path.resolve(pathToDir, `${name}.mdx`),
       interfaceTemplate(interfaces[name], params)
     );
 
     locales.forEach(async locale => {
+      const localeDir = config.subDirs?.interface ? path.resolve(localeAPIDir(locale), config.subDirs.interface) : path.resolve(localeAPIDir(locale))
+      fs.ensureDirSync(localeDir)
       await fs.writeFile(
-        path.resolve(localeAPIDir(locale), `${name}.mdx`),
+        path.resolve(localeDir, `${name}.mdx`),
         interfaceTemplate(interfaces[name], { ...params, locale })
       );
     });
   });
 
   Object.keys(namespaces).forEach(async name => {
+    const pathToDir = config.subDirs?.namespace ? path.resolve(apiDir, config.subDirs.namespace) : path.resolve(apiDir)
+    fs.ensureDirSync(pathToDir)
     await fs.writeFile(
-      path.resolve(apiDir, `${name}.mdx`),
+      path.resolve(pathToDir, `${name}.mdx`),
       namespaceTemplate(namespaces[name], params)
     );
 
     locales.forEach(async locale => {
+      const localeDir = config.subDirs?.namespace ? path.resolve(localeAPIDir(locale), config.subDirs.namespace) : path.resolve(localeAPIDir(locale))
+      fs.ensureDirSync(localeDir)
       await fs.writeFile(
-        path.resolve(localeAPIDir(locale), `${name}.mdx`),
+        path.resolve(localeDir, `${name}.mdx`),
         namespaceTemplate(namespaces[name], { ...params, locale })
       );
     });
   });
 
   Object.keys(constants).forEach(async name => {
+    const pathToDir = config.subDirs?.constant ? path.resolve(apiDir, config.subDirs.constant) : path.resolve(apiDir)
+    fs.ensureDirSync(pathToDir)
     await fs.writeFile(
-      path.resolve(apiDir, `${name}.mdx`),
+      path.resolve(pathToDir, `${name}.mdx`),
       constantTemplate(constants[name], params)
     );
 
     locales.forEach(async locale => {
+      const localeDir = config.subDirs?.constant ? path.resolve(localeAPIDir(locale), config.subDirs.constant) : path.resolve(localeAPIDir(locale))
+      fs.ensureDirSync(localeDir)
       await fs.writeFile(
-        path.resolve(localeAPIDir(locale), `${name}.mdx`),
+        path.resolve(localeDir, `${name}.mdx`),
         constantTemplate(constants[name], { ...params, locale })
       );
     });
   });
 
   Object.keys(typedefs).forEach(async name => {
+    const pathToDir = config.subDirs?.typedef ? path.resolve(apiDir, config.subDirs.typedef) : path.resolve(apiDir)
+    fs.ensureDirSync(pathToDir)
     await fs.writeFile(
-      path.resolve(apiDir, `${name}.mdx`),
+      path.resolve(pathToDir, `${name}.mdx`),
       typedefTemplate(typedefs[name], params)
     );
 
     locales.forEach(async locale => {
+      const localeDir = config.subDirs?.typedef ? path.resolve(localeAPIDir(locale), config.subDirs.typedef) : path.resolve(localeAPIDir(locale))
+      fs.ensureDirSync(localeDir)
       await fs.writeFile(
-        path.resolve(localeAPIDir(locale), `${name}.mdx`),
+        path.resolve(localeDir, `${name}.mdx`),
         typedefTemplate(typedefs[name], { ...params, locale })
       );
     });
   });
 
   Object.keys(globals).forEach(async name => {
+    const pathToDir = config.subDirs?.global ? path.resolve(apiDir, config.subDirs.global) : path.resolve(apiDir)
+    fs.ensureDirSync(pathToDir)
     await fs.writeFile(
-      path.resolve(apiDir, `${name}.mdx`),
+      path.resolve(pathToDir, `${name}.mdx`),
       globalTemplate(globals[name], params)
     );
 
     locales.forEach(async locale => {
+      const localeDir = config.subDirs?.global ? path.resolve(localeAPIDir(locale), config.subDirs.global) : path.resolve(localeAPIDir(locale))
+      fs.ensureDirSync(localeDir)
       await fs.writeFile(
-        path.resolve(localeAPIDir(locale), `${name}.mdx`),
+        path.resolve(localeDir, `${name}.mdx`),
         globalTemplate(globals[name], { ...params, locale })
       );
     });
   });
-
-  if (sidebar) {
-    await fs.writeFile(
-      path.resolve(process.cwd(), sidebar, "sidebars-api.js"),
-      sidebarTemplate({
-        classes: Object.values(classes),
-        interfaces: Object.values(interfaces),
-        namespaces: Object.values(namespaces),
-        constants: Object.values(constants),
-        typedefs: Object.values(typedefs),
-        globals: Object.values(globals)
-      }, config.prefix)
-    );
-  }
 }, { unsafeCleanup: true });
