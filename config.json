@@ -1,8 +1,17 @@
+
 {
+  "$schema": "./jsdoc-to-mdx.schema.json",
   "locales": ["ko"],
   "outDir": "./docs/docs/api",
   "localesDir": "./docs/i18n/{locale}/docusaurus-plugin-content-docs/current/api",
-  "sidebar": "./docs",
   "prefix": "api/",
-  "jsdoc": "./jsdoc.json"
+  "jsdoc": "./jsdoc.json",
+  "subDirs": {
+    "class": "Class",
+    "interface": "Interface",
+    "namespace": "Namespace",
+    "constant": "Constant",
+    "typedef": "Typedef",
+    "global": "Global"
+  }
 }

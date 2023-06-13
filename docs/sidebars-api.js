@@ -4,48 +4,48 @@ module.exports = {
       "type": "category",
       "label": "Class",
       "items": [
-        "api/DummyClass",
-        "api/ParentClass"
+        "api/classes/DummyClass",
+        "api/classes/ParentClass"
       ]
     },
     {
       "type": "category",
       "label": "Interface",
       "items": [
-        "api/DummyInterface",
-        "api/OtherInterface",
-        "api/ParentInterface"
+        "api/interfaces/DummyInterface",
+        "api/interfaces/OtherInterface",
+        "api/interfaces/ParentInterface"
       ]
     },
     {
       "type": "category",
       "label": "Namespace",
       "items": [
-        "api/DummyNamespace"
+        "api/namespaces/DummyNamespace"
       ]
     },
     {
       "type": "category",
       "label": "Constant",
       "items": [
-        "api/DIRECTION"
+        "api/constants/DIRECTION"
       ]
     },
     {
       "type": "category",
       "label": "Typedef",
       "items": [
-        "api/DefaultInterfaceTypedef",
-        "api/StringOrNumber",
-        "api/InlinePropertyInterfaceTypedef",
-        "api/InterfaceTypedef"
+        "api/typedefs/DefaultInterfaceTypedef",
+        "api/typedefs/StringOrNumber",
+        "api/typedefs/InlinePropertyInterfaceTypedef",
+        "api/typedefs/InterfaceTypedef"
       ]
     },
     {
       "type": "category",
       "label": "Global",
       "items": [
-        "api/SomeGlobalFunction"
+        "api/globals/SomeGlobalFunction"
       ]
     }
   ]
