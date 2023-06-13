@@ -49,7 +49,7 @@ const inputConfigs = options.config
 
 const config: Config = {
   locales: [],
-  localesDir: `${inputConfigs.outDir}/i18n/{locale}/docusaurus-plugin-content-docs/api`,
+  localesDir: `${inputConfigs.outDir}/i18n/{locale}/docusaurus-plugin-content-docs/current/api`,
   sidebar: null,
   prefix: "api/",
   jsdoc: null,
